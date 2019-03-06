@@ -70,7 +70,7 @@ const FixedSizeListTestOptionalProps: React.SFC<{ testBool: boolean }> = ({
         initialScrollOffset={0}
         innerRef={anyRef}
         innerElementType="div"
-        itemData={{ foo: "bar" }}
+        itemData={[{ foo: "bar" }]}
         itemKey={index => "foo" + index.toString()}
         layout={testBool ? "vertical" : "horizontal"}
         onItemsRendered={({
@@ -100,7 +100,7 @@ const FixedSizeListTestOptionalProps: React.SFC<{ testBool: boolean }> = ({
                 : scrollOffset
         }
     >
-        {({ style, index }) => <div style={style}>Test {index}</div>}
+        {({ style, index, data }) => <div style={style}>Test {index} (Data: {data[index].foo})</div>}
     </FixedSizeList>
 );
 
@@ -117,7 +117,7 @@ const VariableSizeListTestOptionalProps: React.SFC<{ testBool: boolean }> = ({
         initialScrollOffset={0}
         innerRef={anyRef}
         innerElementType="div"
-        itemData={{ foo: "bar" }}
+        itemData={[{ foo: "bar" }]}
         itemKey={index => "foo" + index.toString()}
         layout={testBool ? "vertical" : "horizontal"}
         onItemsRendered={({
@@ -148,7 +148,7 @@ const VariableSizeListTestOptionalProps: React.SFC<{ testBool: boolean }> = ({
         }
         estimatedItemSize={0}
     >
-        {({ style, index }) => <div style={style}>Test {index}</div>}
+        {({ style, index, data }) => <div style={style}>Test {index} (Data: {data[index].foo})</div>}
     </VariableSizeList>
 );
 
@@ -170,7 +170,7 @@ const VariableSizeGridTestOptionalProps: React.SFC<{ testBool: boolean }> = ({
         initialScrollTop={0}
         innerRef={anyRef}
         innerElementType="div"
-        itemData={{ foo: "bar" }}
+        itemData={[[{ foo: "bar" }]]}
         itemKey={({ columnIndex, rowIndex }) =>
             columnIndex.toString() + rowIndex.toString()
         }
@@ -199,28 +199,28 @@ const VariableSizeGridTestOptionalProps: React.SFC<{ testBool: boolean }> = ({
         style={{ color: "red" }}
         useIsScrolling={true}
     >
-        {({ style, columnIndex, rowIndex }) => (
+        {({ style, columnIndex, rowIndex, data }) => (
             <div style={style}>
-                Test {rowIndex} {columnIndex}
+                Test {rowIndex} {columnIndex} (Data: {data[rowIndex][columnIndex].foo})
             </div>
         )}
     </VariableSizeGrid>
 );
 
-const RowWithAreEqual = React.memo((props: ListChildComponentProps) => {
-    const { index, style } = props;
-    return <div style={style}>Row {index}</div>;
+const RowWithAreEqual = React.memo((props: ListChildComponentProps<[{foo: string}]>) => {
+    const { index, style, data } = props;
+    return <div style={style}>Row {index} (Data: {data[index].foo})</div>;
 }, areEqual);
 
 class RowWithShouldComponentUpdate extends React.Component<
-    ListChildComponentProps
+    ListChildComponentProps<[{foo: string}]>
 > {
     shouldComponentUpdate(...args: any[]) {
         return shouldComponentUpdate.call(this, ...args);
     }
     render() {
-        const { index, style } = this.props;
-        return <div style={style}>Row {index}</div>;
+        const { index, style, data } = this.props;
+        return <div style={style}>Row {index} (Data: {data[index].foo})</div>;
     }
 }
 
